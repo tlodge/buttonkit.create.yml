@@ -1,0 +1,41 @@
+redis:
+  image:
+    tlodge/databox-redis
+  ports:
+    - "6379"
+  container_name:
+    redis
+
+mongo:
+  image:
+    tlodge/mongo
+  ports:
+    - "27017"
+  command:
+    /usr/bin/mongod --dbpath /data/mongo --smallfiles
+  container_name:
+    mongo
+  
+create:
+  image:
+    tlodge/buttonkit.create
+  environment:
+    VIRTUAL_HOST: create.buttonkit.com
+    VIRTUAL_PORT: 8065
+    LETSENCRYPT_HOST: create.buttonkit.com
+    LETSENCRYPT_EMAIL: tlodg:e@gmail.com
+    GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+    GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+    GITHUB_CALLBACK: ${GITHUB_CALLBACK}
+    GITHUB_API: ${GITHUB_API}
+    GITHUB_RAW_URL: ${GITHUB_RAW_URL}
+    GITHUB_URL: ${GITHUB_URL}
+  links:
+    - mongo
+    - redis
+  ports:
+    - "8065:8065"
+  command:
+   npm start
+  container_name:
+    create
